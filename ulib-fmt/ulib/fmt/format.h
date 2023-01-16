@@ -55,12 +55,14 @@ namespace ulib
         return ulib::u8string((char8 *)buffer.data(), buffer.size());
     }
 
+#ifdef __cpp_char8_t
     template <typename... T>
     ulib::string format(ulib::string_view fmt, T &&...args)
     {
         fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
         return ulib::vformat(vv, fmt::make_format_args(args...));
     }
+#endif
 
     template <typename... T>
     ulib::string format(ulib::u8string_view fmt, T &&...args)
