@@ -1,0 +1,14 @@
+type: executable
+name: .test
+
+deps:
+  - vcpkg:fmt
+  - ulib-fmt
+  - global:k2rate/ulib [/ulib]
+
+cxx-link-deps:
+  - "user32.lib"
+
+cxx-build-flags:
+  compiler:
+    - "/utf-8"

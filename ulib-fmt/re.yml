@@ -1,0 +1,6 @@
+type: static-library
+name: ulib-fmt
+
+deps:
+  - vcpkg:fmt
+  - global:k2rate/ulib [/ulib]
