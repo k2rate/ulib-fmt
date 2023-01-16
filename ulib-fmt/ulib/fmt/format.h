@@ -91,18 +91,19 @@ namespace ulib
         }
     }
 
-    template <class EncodingT, class AllocatorT = ulib::DefaultAllocator, typename... T>
-    ulib::EncodedString<EncodingT, AllocatorT> format(ulib::u8string_view fmt, T &&...args)
-    {
-        fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
-        return ulib::vformat<EncodingT, AllocatorT>(vv, fmt::make_format_args<fmt::buffer_context<char>>(args...));
-    }
-
+#ifdef __cpp_char8_t
     template <class EncodingT, class AllocatorT = ulib::DefaultAllocator, typename... T>
     ulib::EncodedString<EncodingT, AllocatorT> format(ulib::string_view fmt, T &&...args)
     {
         fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
         return ulib::vformat<EncodingT, AllocatorT>(vv, fmt::make_format_args<fmt::buffer_context<char>>(args...));
     }
+#endif
 
+    template <class EncodingT, class AllocatorT = ulib::DefaultAllocator, typename... T>
+    ulib::EncodedString<EncodingT, AllocatorT> format(ulib::u8string_view fmt, T &&...args)
+    {
+        fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
+        return ulib::vformat<EncodingT, AllocatorT>(vv, fmt::make_format_args<fmt::buffer_context<char>>(args...));
+    }
 }
