@@ -47,7 +47,7 @@ struct fmt::formatter<ulib::EncodedString<EncodingT, AllocatorT>>
 
 namespace ulib
 {
-    ulib::u8string vformat(fmt::basic_string_view<char> format_str,
+    inline ulib::u8string vformat(fmt::basic_string_view<char> format_str,
                            fmt::basic_format_args<fmt::buffer_context<fmt::type_identity_t<char>>> args)
     {
         fmt::basic_memory_buffer<char> buffer;
@@ -57,7 +57,7 @@ namespace ulib
 
 #ifdef __cpp_char8_t
     template <typename... T>
-    ulib::string format(ulib::string_view fmt, T &&...args)
+    inline ulib::string format(ulib::string_view fmt, T &&...args)
     {
         fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
         return ulib::vformat(vv, fmt::make_format_args(args...));
@@ -65,14 +65,14 @@ namespace ulib
 #endif
 
     template <typename... T>
-    ulib::string format(ulib::u8string_view fmt, T &&...args)
+    inline ulib::string format(ulib::u8string_view fmt, T &&...args)
     {
         fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
         return ulib::vformat(vv, fmt::make_format_args(args...));
     }
 
     template <class EncodingT, class AllocatorT = ulib::DefaultAllocator>
-    ulib::EncodedString<EncodingT, AllocatorT> vformat(fmt::basic_string_view<char> format_str,
+    inline ulib::EncodedString<EncodingT, AllocatorT> vformat(fmt::basic_string_view<char> format_str,
                                                        fmt::basic_format_args<fmt::buffer_context<fmt::type_identity_t<char>>> args)
     {
         ulib::StandardAllocator<char, AllocatorT> al{};
@@ -93,7 +93,7 @@ namespace ulib
 
 #ifdef __cpp_char8_t
     template <class EncodingT, class AllocatorT = ulib::DefaultAllocator, typename... T>
-    ulib::EncodedString<EncodingT, AllocatorT> format(ulib::string_view fmt, T &&...args)
+    inline ulib::EncodedString<EncodingT, AllocatorT> format(ulib::string_view fmt, T &&...args)
     {
         fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
         return ulib::vformat<EncodingT, AllocatorT>(vv, fmt::make_format_args<fmt::buffer_context<char>>(args...));
@@ -101,7 +101,7 @@ namespace ulib
 #endif
 
     template <class EncodingT, class AllocatorT = ulib::DefaultAllocator, typename... T>
-    ulib::EncodedString<EncodingT, AllocatorT> format(ulib::u8string_view fmt, T &&...args)
+    inline ulib::EncodedString<EncodingT, AllocatorT> format(ulib::u8string_view fmt, T &&...args)
     {
         fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
         return ulib::vformat<EncodingT, AllocatorT>(vv, fmt::make_format_args<fmt::buffer_context<char>>(args...));
