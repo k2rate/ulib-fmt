@@ -1,8 +1,10 @@
 #include <ulib/fmt/format.h>
-#include <windows.h>
+#include <ulib/fmt/path.h>
 
 #include <ulib/encodings/utf16/string.h>
 #include <ulib/encodings/utf32/string.h>
+
+#include <windows.h>
 
 int main()
 {
@@ -18,9 +20,10 @@ int main()
     ulib::format<ulib::Utf8>(u8"{}", u8str);
     ulib::format(u8"hi {}", u16str);
 
-    ulib::u8string u8out = ulib::format(u8"u8:{} u16:{} u32:{} u8string_view:{}", u8str, u16str, u32str, test);
-    auto u16out = ulib::Convert<ulib::Utf8, ulib::Utf16>(u8out);
+    ulib::u8string u8out = ulib::format(u8"u8:{} u16:{} u32:{} u8string_view:{}\ncurrent_path: {}",
+                                        u8str, u16str, u32str, test, std::filesystem::current_path());
 
+    auto u16out = ulib::Convert<ulib::Utf8, ulib::Utf16>(u8out);
     MessageBoxW(0, u16out.c_str(), L"ky", MB_OK);
 
     return 0;
