@@ -1,14 +1,12 @@
 #pragma once
 
-#include <fmt/format.h>
 #include <ulib/containers/encodedstring.h>
 #include <ulib/containers/stringview.h>
 #include <ulib/encodings/utf8/string.h>
 #include <ulib/encodings/utf8/stringview.h>
 #include <ulib/encodings/converter.h>
-#include <ulib/encodings/utf16/string.h>
-#include <ulib/encodings/utf32/string.h>
 #include <ulib/allocators/standardallocator.h>
+#include <fmt/format.h>
 
 template <class EncodingT, class AllocatorT>
 struct fmt::formatter<ulib::EncodedString<EncodingT, AllocatorT>>
@@ -37,6 +35,41 @@ struct fmt::formatter<ulib::EncodedString<EncodingT, AllocatorT>>
         else
         {
             auto u8str = ulib::Converter<AllocatorT>::Convert<EncodingT, ulib::Utf8>(p);
+            fmt::string_view name((typename ulib::Utf8::CharT *)u8str.Data(), u8str.Size());
+
+            fmt::formatter<fmt::string_view> ft;
+            return ft.format(name, ctx);
+        }
+    }
+};
+
+template <class EncodingT>
+struct fmt::formatter<ulib::EncodedStringView<EncodingT>>
+{
+    using CharT = typename EncodingT::CharT;
+    using StringViewT = ulib::EncodedStringView<EncodingT>;
+
+    // Parses format specifications of the form ['f' | 'e'].
+    constexpr auto parse(fmt::format_parse_context &ctx) -> decltype(ctx.begin())
+    {
+        return ctx.end();
+    }
+
+    // Formats the point p using the parsed format specification (presentation)
+    // stored in this formatter.
+    template <typename FormatContext>
+    auto format(const StringViewT &p, FormatContext &ctx)
+    {
+        if constexpr (std::is_same_v<EncodingT, ulib::Utf8>)
+        {
+            fmt::string_view name((CharT *)p.Data(), p.Size());
+
+            fmt::formatter<fmt::string_view> ft;
+            return ft.format(name, ctx);
+        }
+        else
+        {
+            auto u8str = ulib::Convert<EncodingT, ulib::Utf8>(p);
             fmt::string_view name((typename ulib::Utf8::CharT *)u8str.Data(), u8str.Size());
 
             fmt::formatter<fmt::string_view> ft;
