@@ -2,10 +2,11 @@
 
 #include <ulib/containers/encodedstring.h>
 #include <ulib/containers/stringview.h>
-#include <ulib/encodings/utf8/string.h>
-#include <ulib/encodings/utf8/stringview.h>
-#include <ulib/encodings/converter.h>
+
+#include <ulib/u8.h>
+
 #include <ulib/allocators/standardallocator.h>
+
 #include <fmt/format.h>
 
 template <class EncodingT, class AllocatorT>
@@ -27,7 +28,7 @@ struct fmt::formatter<ulib::EncodedString<EncodingT, AllocatorT>>
     {
         if constexpr (std::is_same_v<EncodingT, ulib::Utf8>)
         {
-            fmt::string_view name((CharT *)p.Data(), p.Size());
+            fmt::string_view name((char *)p.Data(), p.Size());
 
             fmt::formatter<fmt::string_view> ft;
             return ft.format(name, ctx);
@@ -35,7 +36,7 @@ struct fmt::formatter<ulib::EncodedString<EncodingT, AllocatorT>>
         else
         {
             auto u8str = ulib::Converter<AllocatorT>::Convert<EncodingT, ulib::Utf8>(p);
-            fmt::string_view name((typename ulib::Utf8::CharT *)u8str.Data(), u8str.Size());
+            fmt::string_view name((char *)u8str.Data(), u8str.Size());
 
             fmt::formatter<fmt::string_view> ft;
             return ft.format(name, ctx);
@@ -62,15 +63,15 @@ struct fmt::formatter<ulib::EncodedStringView<EncodingT>>
     {
         if constexpr (std::is_same_v<EncodingT, ulib::Utf8>)
         {
-            fmt::string_view name((CharT *)p.Data(), p.Size());
+            fmt::string_view name((char *)p.Data(), p.Size());
 
             fmt::formatter<fmt::string_view> ft;
             return ft.format(name, ctx);
         }
         else
         {
-            auto u8str = ulib::Convert<EncodingT, ulib::Utf8>(p);
-            fmt::string_view name((typename ulib::Utf8::CharT *)u8str.Data(), u8str.Size());
+            auto u8str = ulib::u8(p);
+            fmt::string_view name((char *)u8str.Data(), u8str.Size());
 
             fmt::formatter<fmt::string_view> ft;
             return ft.format(name, ctx);
@@ -98,7 +99,7 @@ namespace ulib
 #endif
 
     template <typename... T>
-    inline ulib::string format(ulib::u8string_view fmt, T &&...args)
+    inline ulib::u8string format(ulib::u8string_view fmt, T &&...args)
     {
         fmt::basic_string_view<char> vv((char *)fmt.data(), fmt.size());
         return ulib::vformat(vv, fmt::make_format_args(args...));

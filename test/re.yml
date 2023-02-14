@@ -11,4 +11,4 @@ cxx-link-deps:
 
 cxx-build-flags:
   compiler:
-    - "/utf-8"
+    - "/utf-8 /std:c++20"

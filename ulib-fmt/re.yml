@@ -3,4 +3,4 @@ name: ulib-fmt
 
 deps:
   - global:k2rate/ulib [/ulib]
-  - vcpkg:fmt
+  - conan:fmt@9.1.0
