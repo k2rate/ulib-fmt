@@ -2,5 +2,5 @@ type: static-library
 name: ulib-fmt
 
 deps:
-  - global:k2rate/ulib [/ulib]
-  - conan:fmt@9.1.0
+  - github:k2rate/ulib ^2.5.4 [/ulib]
+  - conan:fmt ^9.1.0

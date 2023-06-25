@@ -2,9 +2,8 @@ type: executable
 name: .test
 
 deps:
-  - vcpkg:fmt
   - ulib-fmt
-  - global:k2rate/ulib [/ulib]
+  - github:k2rate/ulib ^2.5.4 [/ulib]
 
 cxx-link-deps:
   - "user32.lib"
