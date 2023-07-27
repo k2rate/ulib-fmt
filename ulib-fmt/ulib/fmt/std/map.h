@@ -45,11 +45,11 @@ struct fmt::formatter<std::map<K, T>>
 
                 if constexpr (ulib::is_string_v<K>)
                 {
-                    result += ulib::u8(fmt::format("\"{}\":", ulib::fmt::detail::EscapeString(ulib::u8(it->first))));
+                    result += ulib::u8(fmt::format("\"{}\": ", ulib::fmt::detail::EscapeString(ulib::u8(it->first))));
                 }
                 else
                 {
-                    result += ulib::u8(fmt::format("{}", it->first));
+                    result += ulib::u8(fmt::format("{}: ", it->first));
                 }
 
                 if constexpr (ulib::is_string_v<T>)

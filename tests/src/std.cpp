@@ -50,9 +50,28 @@ TEST(Format, StdMap)
 {
     std::map<ulib::string, uint> map;
     map["port"] = 25565;
+
+    auto result = ulib::format(u8"{}", map);
+    ASSERT_EQ(result, u8R"({"port": 25565})");
+}
+
+TEST(Format, StdMap2)
+{
+    std::map<ulib::string, uint> map;
+    map["port"] = 25565;
     map["password"] = 1332;
     map["count"] = 8;
 
     auto result = ulib::format(u8"{}", map);
     // ASSERT_EQ(result, u8"[[count, 8], [password, 1332], [port, 25565]]");
 }
+
+TEST(Format, StdMapIntKey)
+{
+    std::map<uint, ulib::string> map;
+    map[25565] = "port";
+
+    auto result = ulib::format(u8"{}", map);
+    ASSERT_EQ(result, u8R"({25565: "port"})");
+}
+
