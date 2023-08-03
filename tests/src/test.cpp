@@ -31,11 +31,6 @@ TEST(Format, StdCompatibility)
     ASSERT_TRUE(w_str == w_result);
 }
 
-namespace std
-{
-    bool operator==(const std::string &str, const ulib::string &str1) { return str1.Equal(str); }
-} // namespace std
-
 TEST(Format, ReturnTypeEquals)
 {
     {
