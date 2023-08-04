@@ -3,9 +3,6 @@
 #include <ulib/format.h>
 #include <ulib/fmt/path.h>
 
-#include <ulib/u16.h>
-#include <ulib/u32.h>
-#include <ulib/wchar.h>
 #include <ulib/string.h>
 
 TEST(Format, Path)

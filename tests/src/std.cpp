@@ -7,9 +7,6 @@
 #include <ulib/fmt/std/array.h>
 #include <ulib/fmt/std/pair.h>
 
-#include <ulib/u16.h>
-#include <ulib/u32.h>
-#include <ulib/wchar.h>
 #include <ulib/string.h>
 
 TEST(Format, StdArray)

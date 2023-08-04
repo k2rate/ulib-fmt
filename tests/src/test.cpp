@@ -5,9 +5,6 @@
 #include <ulib/allocators/fastmemallocator.h>
 #include <ulib/allocators/defaultallocator.h>
 
-#include <ulib/u16.h>
-#include <ulib/u32.h>
-#include <ulib/wchar.h>
 #include <ulib/string.h>
 
 TEST(Format, StdCompatibility)
@@ -29,6 +26,7 @@ TEST(Format, StdCompatibility)
     ASSERT_TRUE(u16_str == u16_result);
     ASSERT_TRUE(u32_str == u32_result);
     ASSERT_TRUE(w_str == w_result);
+
 }
 
 TEST(Format, ReturnTypeEquals)

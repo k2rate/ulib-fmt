@@ -1,99 +1,35 @@
 #pragma once
 
-#include <ulib/u8.h>
+#include <ulib/string.h>
+#include <ulib/typetraits/allocator.h>
+#include <ulib/typetraits/typeordefault.h>
+#include <ulib/typetraits/string.h>
 
+#include <ulib/allocators/tempallocator.h>
 #include <ulib/allocators/standardallocator.h>
 #include <ulib/allocators/staticallocator.h>
-
-#include <ulib/typetraits/encoding.h>
-#include <ulib/typetraits/allocator.h>
-#include <ulib/typetraits/selecttype.h>
-#include <ulib/typetraits/string.h>
 
 #include <fmt/format.h>
 
 namespace ulib
 {
-    using FormatAllocatorT = ulib::StaticAllocator<ulib::DefaultAllocator>;
+    using FormatAllocatorT = TempAllocatorT;
 
     namespace detail
     {
-        template <class S, class NewEncoding, class NewAlloc>
-        struct rebind_string
-        {
-            using Type = ulib::EncodedString<NewEncoding, NewAlloc>;
-        };
-
-        template <class CharT, class Traits, class A, class NewEncoding, class NewAlloc>
-        struct rebind_string<std::basic_string<CharT, Traits, A>, NewEncoding, NewAlloc>
-        {
-            using Type = std::basic_string<typename NewEncoding::CharT, std::char_traits<typename NewEncoding::CharT>,
-                                           ulib::StandardAllocator<CharT, NewAlloc>>;
-        };
-
-        template <class CharT, class Traits, class NewEncoding, class NewAlloc>
-        struct rebind_string<std::basic_string_view<CharT, Traits>, NewEncoding, NewAlloc>
-        {
-            using Type = std::basic_string<typename NewEncoding::CharT, std::char_traits<typename NewEncoding::CharT>,
-                                           ulib::StandardAllocator<CharT, NewAlloc>>;
-        };
-
-        template <class S, class NewEncoding, class NewAlloc>
-        using rebind_string_t = typename rebind_string<S, NewEncoding, NewAlloc>::Type;
-
-        // template <class EncodingT, class AllocatorT, class NewEncoding, class NewAlloc>
-        // struct rebind_string<ulib::EncodedString<EncodingT, AllocatorT>, NewEncoding, NewAlloc>
-        // {
-        //     using Type = ulib::EncodedString<NewEncoding, NewAlloc>;
-        // };
-
-        // template <class EncodingT, class NewEncoding, class NewAlloc>
-        // struct rebind_string<ulib::EncodedStringView<EncodingT>, NewEncoding, NewAlloc>
-        // {
-        //     using Type = ulib::EncodedString<NewEncoding, NewAlloc>;
-        // };
-
-        template <class EncodingT>
-        constexpr bool IsRawEncoding = EncodingT::kType == EncodingType::Raw;
-
-        template <class EncodingT, class CharT>
-        constexpr bool IsEncodingSizeCompatible = sizeof(typename EncodingT::CharT) == sizeof(CharT);
-
-        template <class EncodingT, class CharT>
-        constexpr bool IsRawEncodingLike = IsRawEncoding<EncodingT> && IsEncodingSizeCompatible<EncodingT, CharT>;
-
-        template <class EncodingT>
-        constexpr bool IsEncodingFmtCompatible =
-            std::is_same_v<EncodingT, Utf8> || detail::IsRawEncodingLike<EncodingT, char>;
-
-        template <class T, class DefaultT>
-        struct SelectType
-        {
-            using Type = T;
-        };
-
-        template <class DefaultT>
-        struct SelectType<void, DefaultT>
-        {
-            using Type = DefaultT;
-        };
-
-        template <class T, class DefaultT>
-        using SelectTypeT = typename SelectType<T, DefaultT>::Type;
-
         template <typename FormatContext, class EncodingT>
-        auto FormatHandler(const ulib::EncodedStringView<EncodingT> p, FormatContext &ctx)
+        auto FormatHandler(const EncodedStringView<EncodingT> p, FormatContext &ctx)
         {
             fmt::formatter<fmt::string_view> ft;
 
-            if constexpr (IsEncodingFmtCompatible<EncodingT>)
+            if constexpr (is_encodings_raw_movable_v<EncodingT, Utf8>)
             {
                 fmt::string_view name((char *)p.Data(), p.Size());
                 return ft.format(name, ctx);
             }
             else
             {
-                auto u8str = Convert<Utf8, FormatAllocatorT>(p);
+                auto u8str = Convert<Utf8, TempAllocatorT>(p);
 
                 fmt::string_view name((char *)u8str.Data(), u8str.Size());
                 return ft.format(name, ctx);
@@ -140,10 +76,10 @@ namespace ulib
         fmt::basic_format_args<fmt::buffer_context<fmt::type_identity_t<char>>> args)
     {
         StandardAllocator<char, FormatAllocatorT> al{};
-        fmt::basic_memory_buffer<char, 0x1000, ulib::StandardAllocator<char, FormatAllocatorT>> buffer(al);
+        fmt::basic_memory_buffer<char, 0x1000, StandardAllocator<char, FormatAllocatorT>> buffer(al);
         fmt::detail::vformat_to(buffer, format_str, args);
 
-        if constexpr (detail::IsEncodingFmtCompatible<EncodingT>)
+        if constexpr (is_encodings_raw_movable_v<EncodingT, Utf8>)
         {
             return ulib::EncodedString<EncodingT, AllocatorT>((typename EncodingT::CharT *)buffer.data(),
                                                               buffer.size());
@@ -154,19 +90,16 @@ namespace ulib
         }
     }
 
-    template <class UOutputEncodingT = void, class UOutputAllocatorT = void, class StringT,
-              class EncodingT = argument_encoding_t<StringT>,
-              class AllocatorT = SelectTypeT<ulib_container_allocator_t<StringT>, DefaultAllocator>,
-              std::enable_if_t<!std::is_same_v<EncodingT, void>, bool> = true,
-              class OutputEncodingT = SelectTypeT<UOutputEncodingT, EncodingT>,
-              class OutputAllocatorT = SelectTypeT<UOutputAllocatorT, AllocatorT>,
-              //   class OutputStringT = detail::rebind_string_t<StringT, OutputEncodingT, OutputAllocatorT>,
-              typename... T>
+    template <class UOutputEncodingT = missing_type, class UOutputAllocatorT = missing_type, class StringT,
+              class EncodingT = argument_encoding_or_die_t<StringT>,
+              class AllocatorT = constainer_choose_ulib_allocator_or_die_t<StringT>,
+              class OutputEncodingT = type_or_default_t<UOutputEncodingT, EncodingT>,
+              class OutputAllocatorT = type_or_default_t<UOutputAllocatorT, AllocatorT>, typename... T>
     inline EncodedString<OutputEncodingT, OutputAllocatorT> format(const StringT &fmt, T &&...args)
     {
         EncodedStringView<EncodingT> view = fmt;
-
-        if constexpr (detail::IsEncodingFmtCompatible<EncodingT>)
+        
+        if constexpr (is_encodings_raw_movable_v<EncodingT, Utf8>)
         {
             fmt::basic_string_view<char> vv((char *)view.data(), view.size());
             return ulib::vformat<OutputEncodingT, OutputAllocatorT>(vv, fmt::make_format_args(args...));

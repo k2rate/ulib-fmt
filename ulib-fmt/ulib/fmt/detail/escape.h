@@ -1,13 +1,13 @@
 #pragma once
 
-#include <ulib/u8.h>
+#include <ulib/string.h>
 #include <ulib/typetraits/string.h>
 
 namespace ulib::fmt::detail
 {
     inline ulib::u8string EscapeString(ulib::u8string_view view)
     {
-        ulib::u8string result;
+        ulib::u8string result(args::Capacity{view.size() * 2});
         for (auto ch : view)
         {
             if (ch == '\n')
