@@ -2,7 +2,7 @@
 
 // #include <ulib/format.h>
 // #include <ulib/fmt/list.h>
-// #include <ulib/string.h>
+#include <ulib/string.h>
 
 // TEST(Format, List)
 // {
@@ -19,10 +19,12 @@ TEST(GithubCICheck, Check0)
 
 TEST(GithubCICheck, Check1)
 {
+    std::string str;
     ASSERT_EQ(2, 2);
 }
 
 TEST(GithubCICheck, Check2)
 {
+    ulib::string str;
     ASSERT_EQ(3, 3);
 }
