@@ -3,7 +3,7 @@ name: .tests
 
 platform.windows:
   deps:
-    - vcpkg:gtest @ static-md
+    - vcpkg:gtest
 
 platform.!windows:
   deps:
