@@ -22,9 +22,5 @@ deps:
 
 # cxx-standard: 20
 
-platform.linux|osx:
-  cxx-global-link-deps:
-    - pthread
-
 load-context.!standalone:
   enabled: false
