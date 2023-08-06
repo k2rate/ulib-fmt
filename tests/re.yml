@@ -1,20 +1,17 @@
 type: executable
 name: .tests
 
-platform.windows:
-  deps:
-    - vcpkg:gtest
-
-platform.!windows:
-  deps:
-    - vcpkg:gtest
-
 platform.linux|osx:
   cxx-global-link-deps:
     - pthread
 
 deps:
   - ulib-fmt
+  - github:google/googletest ^1.12.1 [gtest]:
+      cmake-extra-options:
+        gtest_force_shared_crt: true
+        gtest_build_tests: false
+        gtest_disable_pthreads: true
 
 # cxx-build-flags:
 #   compiler:
