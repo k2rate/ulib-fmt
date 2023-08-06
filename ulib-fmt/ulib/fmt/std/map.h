@@ -6,17 +6,6 @@
 
 #include <map>
 
-inline void test()
-{
-    std::map<int, int> mp;
-
-    for (auto it = mp.begin(); it != mp.end(); it++)
-    {
-        auto ky = *it;
-        using tt = decltype(ky);
-    }
-}
-
 template <class K, class T>
 struct fmt::formatter<std::map<K, T>>
 {
