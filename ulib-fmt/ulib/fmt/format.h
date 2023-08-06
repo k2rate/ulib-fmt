@@ -55,10 +55,10 @@ struct fmt::formatter<ulib::EncodedString<EncodingT, AllocatorT>>
     }
 };
 
-template <class EncodingT>
-struct fmt::formatter<ulib::EncodedStringView<EncodingT>>
+template <class EncodingT, class CharT>
+struct fmt::formatter<ulib::EncodedStringSpan<EncodingT, CharT>>
 {
-    using StringViewT = ulib::EncodedStringView<EncodingT>;
+    using StringViewT = ulib::EncodedStringSpan<EncodingT, CharT>;
     constexpr auto parse(fmt::format_parse_context &ctx) -> decltype(ctx.begin()) { return ctx.end(); }
 
     template <typename FormatContext>

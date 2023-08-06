@@ -2,5 +2,5 @@ type: static-library
 name: ulib-fmt
 
 deps:
-  - github:k2rate/ulib ^4.0.0 [/ulib]
+  - github:k2rate/ulib ^5.0.0 [/ulib]
   - github:osdeverr/fmt @re-9.1.0-1

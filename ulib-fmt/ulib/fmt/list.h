@@ -9,7 +9,7 @@ namespace ulib
     namespace detail
     {
         template <class T>
-        ulib::u8string FormatSpan(Span<T> view)
+        ulib::u8string FormatSpan(SpanView<T> view)
         {
             ulib::u8string result;
             result += u8"[";

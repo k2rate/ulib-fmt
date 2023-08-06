@@ -101,6 +101,20 @@ TEST(Format, MoreEncodings)
     ASSERT_EQ(u8_result, u8"hello ку брат 🚀🚀🚀 🚣🚣🚣 それを停止する");
 }
 
+TEST(Format, StringView)
+{
+    ulib::string_view raw_str = "hello";
+    ulib::u8string_view u8_str = u8"ку брат";
+    ulib::u16string_view u16_str = u"🚀🚀🚀";
+    ulib::u32string_view u32_str = U"🚣🚣🚣";
+    ulib::wstring_view w_str = L"それを停止する";
+
+    std::wstring_view w_result = ulib::format(L"{} {} {} {} {}", raw_str, u8_str, u16_str, u32_str, w_str);
+    ulib::u8string u8_result = ulib::format(u8"{}", ulib::wstring_view{w_result});
+
+    ASSERT_EQ(u8_result, u8"hello ку брат 🚀🚀🚀 🚣🚣🚣 それを停止する");
+}
+
 TEST(Format, Integers)
 {
     ulib::u16string u16_result = ulib::format(u"{} {} {} {} {}", 10, 20, -30, -40, 50);
