@@ -1,6 +1,6 @@
 type: project
 name: ulib-fmt-project
 
-load-context.standalone:
-  uses:
-    fmt: github:osdeverr/fmt @re-9.1.0-1
+# load-context.standalone:
+#   uses:
+#     fmt: github:osdeverr/fmt @re-9.1.0-1
